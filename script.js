@@ -1,6 +1,5 @@
-// Anchor: Monday of ISO week 17, 2026. On this Monday the rotation restarts at index 0.
-// Today (Tis 2026-04-21) därmed = Vecka 1 i rotationen.
-var CYCLE_ANCHOR_MONDAY = new Date(2026, 3, 20, 0, 0, 0, 0); // month is 0-indexed (3 = April)
+// Rotation week 1 starts October 26, making November 16–22, 2026 rotation week 4.
+var CYCLE_ANCHOR_MONDAY = new Date(2026, 9, 26, 0, 0, 0, 0); // month is 0-indexed (9 = October)
 
 var weeklyMenus = [
   {
@@ -99,7 +98,9 @@ function getISOWeek(date) {
 function getCurrentMenuIndex() {
   var currentMonday = getMondayStart(new Date());
   var anchorMonday = getMondayStart(CYCLE_ANCHOR_MONDAY);
-  var diffMs = currentMonday.getTime() - anchorMonday.getTime();
+  // Compare calendar dates in UTC so daylight-saving changes cannot shift the rotation.
+  var diffMs = Date.UTC(currentMonday.getFullYear(), currentMonday.getMonth(), currentMonday.getDate()) -
+    Date.UTC(anchorMonday.getFullYear(), anchorMonday.getMonth(), anchorMonday.getDate());
   var weeksSinceAnchor = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
   var len = weeklyMenus.length;
   return ((weeksSinceAnchor % len) + len) % len;
@@ -118,6 +119,10 @@ function renderMenu() {
   var list = document.getElementById("menuList");
   if (!list) return;
 
+  renderMenuDays(list, menu);
+}
+
+function renderMenuDays(list, menu) {
   list.innerHTML = "";
 
   for (var i = 0; i < menu.days.length; i++) {
@@ -132,5 +137,36 @@ function renderMenu() {
   }
 }
 
-renderMenu();
-setInterval(renderMenu, 60 * 60 * 1000);
+function renderFullMenu() {
+  var container = document.getElementById("fullMenu");
+  if (!container) return;
+
+  var activeIndex = getCurrentMenuIndex();
+  container.innerHTML = "";
+
+  for (var i = 0; i < weeklyMenus.length; i++) {
+    var section = document.createElement("section");
+    section.className = "menu-wrap" + (i === activeIndex ? " active-week" : "");
+    section.setAttribute("aria-labelledby", "rotation-week-" + (i + 1));
+
+    var heading = document.createElement("h2");
+    heading.id = "rotation-week-" + (i + 1);
+    heading.className = "rotation-title";
+    heading.textContent = "Menyvecka " + (i + 1) + (i === activeIndex ? " • Aktiv meny" : "");
+    section.appendChild(heading);
+
+    var list = document.createElement("ul");
+    list.className = "menu-list";
+    renderMenuDays(list, weeklyMenus[i]);
+    section.appendChild(list);
+    container.appendChild(section);
+  }
+}
+
+function renderMenus() {
+  renderMenu();
+  renderFullMenu();
+}
+
+renderMenus();
+setInterval(renderMenus, 60 * 60 * 1000);

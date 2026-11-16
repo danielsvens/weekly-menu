@@ -1,6 +1,10 @@
 # Weekly Menu (iPad kitchen display)
 
-Statisk HTML/CSS/JS-sida för veckomeny med 4-veckorsrotation (byts automatiskt varje söndag).
+Statisk HTML/CSS/JS-sida för veckomeny med 6-veckorsrotation (byts automatiskt varje måndag).
+
+Rotationen styrs av `CYCLE_ANCHOR_MONDAY` i `script.js`, som anger måndagen för menyvecka 1. Ankaret är 26 oktober 2026, så 16–22 november 2026 visas menyvecka 4, följt av menyvecka 5 och 6.
+
+Hela rotationen finns på `full-menu.html`, via länken ”Visa hela menyn” under veckans meny. Den aktiva menyveckan markeras automatiskt.
 
 ## Lokal körning med Docker
 

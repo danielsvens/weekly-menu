@@ -12,6 +12,7 @@ FROM nginx:1.27-alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 COPY index.html /usr/share/nginx/html/index.html
+COPY full-menu.html /usr/share/nginx/html/full-menu.html
 COPY styles.css /usr/share/nginx/html/styles.css
 COPY icon.png /usr/share/nginx/html/icon.png
 COPY static /usr/share/nginx/html/static
